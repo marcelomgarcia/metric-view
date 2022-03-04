@@ -9,9 +9,9 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
 
   config.ssh.insert_key = false
-  config.vm.provision "file", source: "keys/config",  destination: "~/.ssh/config"
-  config.vm.provision "file", source: "keys/vagrant", destination: "~/.ssh/id_rsa"
-  config.vm.provision "file", source: "keys/vagrant.pub", destination: "~/.ssh/id_rsa.pub"
+  config.vm.provision "file", source: "files/ssh_keys/config",  destination: "~/.ssh/config"
+  config.vm.provision "file", source: "files/ssh_keys/vagrant", destination: "~/.ssh/id_rsa"
+  config.vm.provision "file", source: "files/ssh_keys/vagrant.pub", destination: "~/.ssh/id_rsa.pub"
   config.vm.provision "shell", inline: "chmod 600 /home/vagrant/.ssh/id_rsa"
   config.vm.provision "shell", inline: "chmod 600 /home/vagrant/.ssh/id_rsa.pub"
   config.vm.provision "shell", inline: "chmod 600 /home/vagrant/.ssh/config"
