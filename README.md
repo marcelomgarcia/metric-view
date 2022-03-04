@@ -1,2 +1,8 @@
-# metric-view
-ELK stack to visualize server metrics
+# Metric Visualization
+
+Using ELK stack to visualize metrics of the system.
+
+## Vagrant
+
+Starting the Vagrant environment
+
