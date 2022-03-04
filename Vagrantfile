@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
         vb.memory = 2048
         vb.cpus = 2
     end
-    flik.vm.network "private_network", ip: "192.168.50.11"
+    flik.vm.network "private_network", ip: "192.168.56.11"
   end
 
   # Define the second node.
@@ -33,13 +33,13 @@ Vagrant.configure("2") do |config|
         vb.memory = 2048
         vb.cpus = 2
     end
-    hopper.vm.network "private_network", ip: "192.168.50.12"
+    hopper.vm.network "private_network", ip: "192.168.56.12"
   end
 
 # Define the master node.
   config.vm.define "atta", primary: true do |atta|
     atta.vm.hostname = "atta"
-    atta.vm.network "private_network", ip: "192.168.50.10"
+    atta.vm.network "private_network", ip: "192.168.56.10"
     atta.vm.network "forwarded_port", guest: 5601, host: 5601
     atta.vm.provider :virtualbox do |vb|
         vb.memory = 4096
