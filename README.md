@@ -27,3 +27,26 @@ The [following parameters were set](https://www.elastic.co/guide/en/elasticsearc
 
 But no [security settings](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/secure-settings.html), or [auditing security settings](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/auditing-settings.html) were applied so far (TODO). 
 
+Basic configuration 
+
+```
+vagrant@atta:~$ sudo grep -v '^#' /etc/elasticsearch/elasticsearch.yml
+cluster.name: metric-vis
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: 192.168.56.10
+cluster.initial_master_nodes: ["atta"]
+vagrant@atta:~$
+```
+
+For Kibana
+
+```
+vagrant@atta:~$ sudo grep -v '^#' /etc/kibana/kibana.yml | grep -v '^$'
+server.port: 5601
+server.host: "192.168.56.10"
+server.publicBaseUrl: "http://192.168.56.10"
+elasticsearch.hosts: ["http://192.168.56.10:9200"]
+vagrant@atta:~$ 
+```
+
