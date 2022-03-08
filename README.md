@@ -105,7 +105,7 @@ NyPr4rt1w6MAMmA8
 vagrant@atta:~$
 ```
 
-Next we configure Kibana to use the password to connect to elasticsearch
+Next we configure Kibana to use the `kibana_system` password to connect to elasticsearch
 
 ```
 vagrant@atta:/usr/share/kibana$ sudo more /etc/kibana/kibana.yml 
