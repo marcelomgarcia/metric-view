@@ -123,3 +123,71 @@ Finally we can log into Kibana using the _elastic_ user
 ```
 http://192.168.56.10:5601/app/home#/
 ```
+
+## Beats
+
+Testing the output of `metricbeat`
+
+```
+vagrant@hopper:~$ sudo metricbeat test output
+elasticsearch: http://192.168.56.10:9200...
+  parse url... OK
+  connection...
+    parse host... OK
+    dns lookup... OK
+    addresses: 192.168.56.10
+    dial up... OK
+  TLS... WARN secure connection disabled
+  talk to server... ERROR 401 Unauthorized: {"error":{"root_cause":[{"type":"security_exception","reason":"missing authentication credentials for REST request [/]","header":{"WWW-Authenticate":"Basic realm=\"security\" charset=\"UTF-8\""}}],"type":"security_exception","reason":"missing authentication credentials for REST request [/]","header":{"WWW-Authenticate":"Basic realm=\"security\" charset=\"UTF-8\""}},"status":401}
+vagrant@hopper:~$ 
+```
+
+Listing the modules available, that can be _enabled_ or _disabled_
+
+```
+agrant@hopper:~$ sudo metricbeat modules list
+Enabled:
+system 
+                                      
+Disabled:
+activemq
+aerospike
+airflow
+apache
+(...)
+```
+
+To configure user authentication, enter the credentials on the `metricbeat.yml` file
+
+```
+vagrant@hopper:~$ sudo cat /etc/metricbeat/metricbeat.yml
+(...)
+# ---------------------------- Elasticsearch Output ----------------------------                                                                          
+output.elasticsearch:                                                                                                                                     
+  # Array of hosts to connect to.                                            
+  hosts: ["192.168.56.10:9200"]                                                                                                                           
+  (...)
+
+  # Authentication credentials - either API key or username/password.
+  #api_key: "id:api_key"
+  username: "elastic"
+  password: "abc123"
+(...)
+```
+
+Test the output again, and check if the beat is talking with the server
+
+```
+vagrant@hopper:~$ sudo metricbeat test output
+elasticsearch: http://192.168.56.10:9200...
+(...)
+  talk to server... OK
+  version: 7.17.1
+vagrant@hopper:~$ 
+```
+
+If everything is OK, restart the service
+
+```
+vagrant@hopper:~$ sudo systemctl restart metricbeat 
+```
