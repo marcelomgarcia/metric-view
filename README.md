@@ -124,6 +124,86 @@ Finally we can log into Kibana using the _elastic_ user
 http://192.168.56.10:5601/app/home#/
 ```
 
+### Secure Communication
+
+Configuring the cluster to use [TLS for secure communication](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/security-basic-setup.html) between nodes. 
+
+We start by creating a certificate for the cluster
+
+```
+vagrant@atta:~$ cd /usr/share/elasticsearch/
+vagrant@atta:/usr/share/elasticsearch$ ls
+NOTICE.txt  README.asciidoc  bin  jdk  lib  modules  plugins
+vagrant@atta:/usr/share/elasticsearch$ cd bin
+vagrant@atta:/usr/share/elasticsearch/bin$ sudo ./elasticsearch-certutil ca
+This tool assists you in the generation of X.509 certificates and certificate
+signing requests for use with SSL/TLS in the Elastic stack.
+
+(...)
+
+Please enter the desired output file [elastic-stack-ca.p12]: 
+Enter password for elastic-stack-ca.p12 : 
+vagrant@atta:/usr/share/elasticsearch/bin$
+```
+
+The password was generated as before with the `openssl` command.
+
+Copied the CA file to the `$ES_PATH_CONF` directory of both machines `atta` and `hopper` (`flik` is not in use yet)
+
+```
+vagrant@atta:/usr/share/elasticsearch$ sudo cp elastic-stack-ca.p12 /etc/elasticsearch/
+```
+
+To copy to `hopper` was necessary to change the permissions first
+
+```
+# On atta
+vagrant@atta:/usr/share/elasticsearch$ cd
+vagrant@atta:~$ sudo cp /usr/share/elasticsearch/elastic-stack-ca.p12 .
+vagrant@atta:~$ sudo chown vagrant:vagrant elastic-stack-ca.p12 
+vagrant@atta:~$ scp elastic-stack-ca.p12 hopper:
+elastic-stack-ca.p12                                             100% 2672     2.1MB/s   00:00    
+vagrant@atta:~$ 
+# On hopper
+vagrant@hopper:~$ sudo cp elastic-stack-ca.p12 /etc/metricbeat/
+```
+
+Adding the following lines to `elasticsearch.yml`
+
+```
+vagrant@atta:~$ sudo tail -n 6 /etc/elasticsearch/elasticsearch.yml
+# After adding CA
+#xpack.security.transport.ssl.enabled: true <-- this line was already in the file.
+xpack.security.transport.ssl.verification_mode: certificate 
+xpack.security.transport.ssl.client_authentication: required
+xpack.security.transport.ssl.keystore.path: elastic-stack-ca.p12
+xpack.security.transport.ssl.truststore.path: elastic-stack-ca.p12
+vagrant@atta:~$ 
+```
+
+Since we are using password for the certificate, we need to add the password to the Elasticsearch keystore
+
+```
+vagrant@atta:/usr/share/elasticsearch/bin$ sudo ./elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password                                   
+Enter value for xpack.security.transport.ssl.keystore.secure_password:                                                                                               
+vagrant@atta:/usr/share/elasticsearch/bin$ sudo ./elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password                                 
+Enter value for xpack.security.transport.ssl.truststore.secure_password:                                                                                             
+vagrant@atta:/usr/share/elasticsearch/bin$ 
+```
+
+Make sure the CA file has group _read-write_ permission, otherwise `elasticsearch` will not start
+
+```
+# Set permissions on the CA file.
+root@atta:/var/log/elasticsearch# sudo chmod 0664 /etc/elasticsearch/elastic-stack-ca.p12 
+vagrant@atta:~$ sudo ls -l /etc/elasticsearch/elastic-stack-ca.p12
+-rw-rw-r-- 1 root elasticsearch 2672 Mar 12 12:39 /etc/elasticsearch/elastic-stack-ca.p12
+vagrant@atta:~$
+```
+
+Restart Elasticsearch.
+
+
 ## Beats
 
 Testing the output of `metricbeat`
