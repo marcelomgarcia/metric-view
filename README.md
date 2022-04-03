@@ -159,7 +159,7 @@ To copy to `hopper` was necessary to change the permissions first
 ```
 # On atta
 vagrant@atta:/usr/share/elasticsearch$ cd
-vagrant@atta:~$ sudo cp /usr/share/elasticsearch/elastic-stack-ca.p12 .
+vagrant@atta:~$ sudo cp /usr/sh are/elasticsearch/elastic-stack-ca.p12 .
 vagrant@atta:~$ sudo chown vagrant:vagrant elastic-stack-ca.p12 
 vagrant@atta:~$ scp elastic-stack-ca.p12 hopper:
 elastic-stack-ca.p12                                             100% 2672     2.1MB/s   00:00    
@@ -203,7 +203,9 @@ vagrant@atta:~$
 
 Restart Elasticsearch.
 
+### Kibana and Client
 
+Configuring [secure communication between Kibana and the client browser](https://kifarunix.com/enable-kibana-https-connection/).
 ## Beats
 
 Testing the output of `metricbeat`
